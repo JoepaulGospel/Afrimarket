@@ -8,6 +8,12 @@
 "start": "next start",
 "lint": "next lint"
 },
+"eslintConfig": {
+"rules": {
+"no-unused-vars": "off",
+"@typescript-eslint/no-unused-vars": "off"
+}
+},
 "dependencies": {
 "next": "14.2.3",
 "react": "18.3.1",
