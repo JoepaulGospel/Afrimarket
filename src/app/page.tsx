@@ -1,125 +1,138 @@
 "use client";
 import React, { useState } from 'react';
-import { Search, Loader2, ShieldAlert, ShoppingCart, Globe, Info, Truck, ArrowRight, CheckCircle } from 'lucide-react';
-import { analyzeProduct, calculateFullQuote, OriginKey } from '@/lib/parser';
+import { Search, Loader2, ShieldAlert, ShoppingCart, Globe, Truck, ArrowRight, X, Info } from 'lucide-react';
+import { analyzeLink, calculateFullQuote } from '../lib/parser';
 export default function AfrimarketSovereign() {
 const [url, setUrl] = useState('');
-const [step, setStep] = useState<'input' | 'verify' | 'result'>('input');
 const [loading, setLoading] = useState(false);
-const [priceInput, setPriceInput] = useState('');
-const [finalData, setFinalData] = useState<any>(null);
-const startAnalysis = () => {
+const [product, setProduct] = useState<any>(null);
+const handleMagicDetection = () => {
 if (!url) return;
 setLoading(true);
 setTimeout(() => {
-setStep('verify');
-setLoading(false);
-}, 1200);
-};
-const completeAnalysis = () => {
-const origin: OriginKey = url.includes('.uk') ? 'UK' : url.includes('taobao') ? 'CN' : 'US';
-const pricing = calculateFullQuote(Number(priceInput), 1.5, origin, 'GADGETS', 'LAGOS');
-setFinalData({
-name: "International Merchandise",
-// Apple Style: Using high-quality placeholder that mimics a product shot
-image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80",
+const { origin, isRestricted, restrictedItem, safeTitle } = analyzeLink(url);
+// Automatic detection simulation
+const priceUsd = 149.99;
+const weight = 1.8;
+const category = 'GADGETS';
+const pricing = calculateFullQuote(priceUsd, weight, origin, category);
+setProduct({
+name: safeTitle.toUpperCase(),
+image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1000",
 origin,
+isRestricted,
+restrictedItem,
 pricing,
 url
 });
-setStep('result');
+setLoading(false);
+}, 2000);
 };
 return (
 <main className="min-h-screen bg-white text-[#1d1d1f] antialiased">
-{/* NAV */}
-<nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-[#d2d2d7]/30 px-8 py-4">
-<div className="max-w-5xl mx-auto flex justify-between items-center text-sm font-semibold tracking-tight">
-<div className="flex items-center gap-2 font-bold italic text-lg">AFRIMARKET</div>
-<div className="flex gap-8 text-zinc-500 uppercase text-[10px] tracking-widest font-black">
-<span>Global Concierge Node</span>
-</div>
+{/* Apple-style minimalist nav */}
+<nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-2xl border-b border-black/5 px-8 py-4 flex justify-between items-center">
+<span className="font-black italic text-xl tracking-tighter">AFRIMARKET</span>
+<div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+<span>Global Fulfillment Node</span>
 </div>
 </nav>
-<div className="max-w-5xl mx-auto px-6 pt-24 pb-20">
-{step === 'input' && (
-<div className="text-center space-y-12 animate-in fade-in duration-1000">
-<h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-tight">
-Shop the world.<br/><span className="text-zinc-300">Delivered home.</span>
+<div className="max-w-6xl mx-auto px-6 pt-32 pb-20">
+{!product && !loading && (
+<div className="max-w-3xl mx-auto text-center space-y-12 py-20 animate-in fade-in zoom-in-95 duration-1000">
+<h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.85]">
+Anything. <br/><span className="text-zinc-200">Imported.</span>
 </h1>
 <div className="relative max-w-2xl mx-auto">
 <input
-className="w-full p-8 text-xl bg-[#f5f5f7] border-none rounded-[2.5rem] outline-none focus:ring-2 ring-indigo-500/20 text-center transition-all"
+className="w-full p-8 text-xl bg-[#f5f5f7] border-none rounded-[2.5rem] outline-none focus:ring-4 ring-indigo-500/10 transition-all text-center font-medium placeholder:text-zinc-300"
 placeholder="Paste Amazon, Zara, or Taobao link..."
 value={url}
 onChange={(e) => setUrl(e.target.value)}
 />
-<button onClick={startAnalysis} className="mt-8 px-16 py-5 bg-black text-white rounded-full font-bold text-lg hover:scale-105 transition-transform active:scale-95 flex items-center gap-3 mx-auto shadow-2xl shadow-black/20">
-{loading ? <Loader2 className="animate-spin" /> : <>Start Analysis <ArrowRight size={20}/></>}
+<button
+onClick={handleMagicDetection}
+className="mt-8 px-16 py-5 bg-black text-white rounded-full font-bold text-lg hover:scale-105 transition-all active:scale-95 shadow-2xl shadow-black/20 flex items-center gap-3 mx-auto"
+>
+Scan Product <ArrowRight size={20}/>
 </button>
 </div>
 </div>
 )}
-{step === 'verify' && (
-<div className="max-w-md mx-auto space-y-10 animate-in slide-in-from-bottom-10 duration-700">
-<div className="text-center space-y-2">
-<h2 className="text-4xl font-bold tracking-tight">One Last Step.</h2>
-<p className="text-zinc-400">Confirm the item price to ensure precision.</p>
-</div>
-<div className="space-y-6">
-<div className="space-y-2">
-<label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 ml-6">Item Price (USD)</label>
-<input
-type="number"
-className="w-full p-8 text-4xl bg-[#f5f5f7] rounded-[2.5rem] outline-none border-none text-center font-bold"
-placeholder="0.00"
-value={priceInput}
-onChange={(e) => setPriceInput(e.target.value)}
-/>
-</div>
-<button onClick={completeAnalysis} className="w-full py-6 bg-black text-white rounded-[2rem] font-bold text-xl shadow-xl shadow-black/10">
-Generate Final Quote
-</button>
-</div>
+{loading && (
+<div className="py-40 text-center space-y-6 animate-in fade-in duration-500">
+<div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+<p className="text-sm font-black uppercase tracking-[0.3em] text-zinc-400">Scanning Global Inventories</p>
 </div>
 )}
-{step === 'result' && finalData && (
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-20 animate-in fade-in duration-1000 items-center">
-<div className="space-y-8">
-<div className="bg-[#f5f5f7] rounded-[4rem] p-12 aspect-square flex items-center justify-center overflow-hidden">
-<img src={finalData.image} className="w-full h-full object-contain mix-blend-multiply" alt="Product" />
+{product && !loading && (
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center animate-in fade-in slide-in-from-bottom-12 duration-1000">
+<div className="relative">
+<div className="bg-[#f5f5f7] rounded-[4rem] p-12 aspect-square flex items-center justify-center overflow-hidden border border-black/5">
+<img src={product.image} className="w-full h-full object-contain mix-blend-multiply transition-transform duration-1000 hover:scale-110" alt="Product" />
+<button onClick={() => setProduct(null)} className="absolute top-8 right-8 p-3 bg-white/80 backdrop-blur-md rounded-full hover:bg-white shadow-sm">
+<X size={20}/>
+</button>
 </div>
-<div className="flex justify-between items-center px-10">
-<div className="text-center"><p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Origin</p><p className="font-bold text-lg">{finalData.origin} Hub</p></div>
-<div className="flex-1 border-t border-dashed border-zinc-200 mx-8"></div>
-<div className="text-center"><p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Dest.</p><p className="font-bold text-lg text-indigo-600">Nigeria</p></div>
+<div className="mt-10 flex justify-between items-center px-10">
+<div className="text-center">
+<p className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">Source</p>
+<p className="font-bold text-sm">{product.origin} HUB</p>
+</div>
+<div className="flex-1 h-[1px] bg-zinc-100 mx-8"></div>
+<div className="text-center">
+<p className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">Final</p>
+<p className="font-bold text-sm text-indigo-600">NIGERIA</p>
+</div>
 </div>
 </div>
 <div className="space-y-12">
 <div className="space-y-4">
-<span className="px-4 py-1.5 bg-green-50 text-green-600 rounded-full text-[10px] font-black uppercase tracking-widest">Verified by AI</span>
-<h2 className="text-5xl font-bold tracking-tighter leading-tight">{finalData.name}</h2>
+<h2 className="text-5xl font-bold tracking-tighter leading-tight text-slate-900">{product.name}</h2>
+<div className="flex items-center gap-2 text-green-600 text-xs font-bold uppercase tracking-widest">
+<Globe size={14}/> Verified Global Link
 </div>
+</div>
+{product.isRestricted ? (
+<div className="p-8 bg-red-50 border border-red-100 rounded-[2.5rem] space-y-4">
+<div className="flex items-center gap-3 text-red-600 font-bold">
+<ShieldAlert size={24}/> <span className="uppercase tracking-widest text-xs">Security Block</span>
+</div>
+<p className="text-sm text-red-700/70 leading-relaxed font-medium">
+Automated screening detected <strong>{product.restrictedItem}</strong>. This item cannot be imported via air freight.
+</p>
+</div>
+) : (
+<div className="space-y-10">
 <div className="space-y-5 border-t border-black/5 pt-10">
-<div className="flex justify-between text-sm"><span className="text-zinc-400 font-medium tracking-tight">Item Value</span><span className="font-semibold text-slate-900">₦{finalData.pricing.itemNgn.toLocaleString()}</span></div>
-<div className="flex justify-between text-sm"><span className="text-zinc-400 font-medium tracking-tight">Global Logistics</span><span className="font-semibold text-slate-900">₦{finalData.pricing.shipNgn.toLocaleString()}</span></div>
-<div className="flex justify-between text-sm"><span className="text-zinc-400 font-medium tracking-tight">Duties & Clearing</span><span className="font-semibold text-slate-900">₦{finalData.pricing.dutyNgn.toLocaleString()}</span></div>
-<div className="flex justify-between items-end pt-6 mt-4 border-t-2 border-slate-900">
-<span className="text-4xl font-bold tracking-tighter text-slate-900">Total NGN</span>
-<span className="text-4xl font-black tracking-tighter text-indigo-600">₦{finalData.pricing.total.toLocaleString()}</span>
+<div className="flex justify-between text-base font-medium">
+<span className="text-zinc-400">Global Item Value</span>
+<span>₦{product.pricing.itemNgn.toLocaleString()}</span>
+</div>
+<div className="flex justify-between text-base font-medium">
+<span className="text-zinc-400">Express Intl. Freight</span>
+<span>₦{product.pricing.shipNgn.toLocaleString()}</span>
+</div>
+<div className="flex justify-between text-base font-medium">
+<span className="text-zinc-400">Customs & Delivery</span>
+<span>₦{(product.pricing.dutyNgn + product.pricing.localDeliveryNgn).toLocaleString()}</span>
+</div>
+<div className="flex justify-between items-end pt-8 mt-4 border-t-2 border-slate-900">
+<span className="text-5xl font-bold tracking-tighter">Total NGN</span>
+<span className="text-5xl font-black tracking-tighter text-indigo-600">₦{product.pricing.total.toLocaleString()}</span>
 </div>
 </div>
-<div className="space-y-4">
 <button
 onClick={() => {
-const message = `ORDER: ${finalData.name}\nLINK: ${finalData.url}\nTOTAL: ₦${finalData.pricing.total.toLocaleString()}`;
-window.location.href = `https://wa.me/234XXXXXXXXXX?text=${encodeURIComponent(message)}`;
+const msg = `NEW ORDER\nProduct: ${product.name}\nTotal: ₦${product.pricing.total.toLocaleString()}\nLink: ${product.url}`;
+window.location.href = `https://wa.me/234XXXXXXXXXX?text=${encodeURIComponent(msg)}`;
 }}
-className="w-full py-6 bg-black text-white rounded-[2.5rem] font-bold text-xl hover:scale-[1.02] transition-transform active:scale-95 shadow-2xl shadow-black/10 flex items-center justify-center gap-3"
+className="w-full py-7 bg-black text-white rounded-[2.5rem] font-bold text-2xl hover:scale-[1.02] transition-transform active:scale-95 shadow-2xl shadow-black/20 flex items-center justify-center gap-4"
 >
-<ShoppingCart size={22} /> Checkout Locally
+<ShoppingCart size={24} /> Checkout Locally
 </button>
-<p className="text-center text-[10px] text-zinc-400 font-bold uppercase tracking-widest">Global fulfillment by Afrimarket Express</p>
 </div>
+)}
 </div>
 </div>
 )}
