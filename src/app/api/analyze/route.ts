@@ -1,16 +1,18 @@
-import { NextResponse } from 'next/server';
-export async function POST(req: Request) {
+import { NextRequest, NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
+export async function POST(req: NextRequest) {
 try {
 const { url } = await req.json();
+// API KEYS
 const SCRAPINGBEE_KEY = "2XI419JWKIZVTK75TQAOWL7402233UASWWXY1KXMBO6A6UWMUN1GXCNX57BG797PU8FSI69BATUH0SU6";
 const GEMINI_KEY = "AIzaSyDLnUIPPoumFDsqPqzJYzrYBA4IqyVGFNo";
-// 1. Fetch HTML via ScrapingBee
+// 1. Fetch via ScrapingBee
 const beeUrl = `https://app.scrapingbee.com/api/v1/?api_key=${SCRAPINGBEE_KEY}&url=${encodeURIComponent(url)}&render_js=false&extract_rules=%7B%22text%22%3A%22body%22%7D`;
 const beeRes = await fetch(beeUrl);
-if (!beeRes.ok) throw new Error("Scraper Blocked");
+if (!beeRes.ok) throw new Error("Product scan limit reached.");
 const rawData = await beeRes.json();
-const pageText = rawData.text?.substring(0, 5000) || "";
-// 2. Extract with Gemini
+const pageText = (rawData.text || "").substring(0, 4500);
+// 2. Extract with Gemini AI
 const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
 const aiResponse = await fetch(geminiUrl, {
 method: 'POST',
@@ -18,22 +20,24 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({
 contents: [{
 parts: [{
-text: `Analyze this text and return a valid JSON object.
-Fields: "name", "price_usd" (number), "image_url", "weight_kg" (number), "category" (GADGETS or CLOTHING), "is_restricted" (boolean).
-Text: ${pageText}`
+text: `Return ONLY a valid JSON object for this product. Do not include markdown code blocks or explanations.
+Required fields: "name", "price_usd" (number), "image_url", "weight_kg" (number), "category" (GADGETS or CLOTHING), "is_restricted" (boolean).
+Source Text: ${pageText}`
 }]
 }]
 })
 });
 const aiData = await aiResponse.json();
+if (!aiData.candidates?.[0]?.content?.parts?.[0]?.text) {
+throw new Error("AI analysis timed out.");
+}
 let resultText = aiData.candidates[0].content.parts[0].text;
-// DEBUG: Remove AI Markdown clutter
-const jsonMatch = resultText.match(/\{[\s\S]*\}/);
-if (!jsonMatch) throw new Error("AI returned invalid format");
-const productInfo = JSON.parse(jsonMatch[0]);
+// Safety: Strip markdown if the AI includes it
+const cleanJson = resultText.replace(/```json|```/gi, "").trim();
+const productInfo = JSON.parse(cleanJson);
 return NextResponse.json(productInfo);
 } catch (error: any) {
-console.error("DEBUG ERROR:", error.message);
-return NextResponse.json({ error: error.message }, { status: 500 });
+console.error("Fulfillment Error:", error.message);
+return NextResponse.json({ error: "System busy. Please check the URL and try again." }, { status: 500 });
 }
 }
