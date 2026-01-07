@@ -1,11 +1,14 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
-const inter = Inter({ subsets: ['latin'] })
-export const metadata = { title: 'Afrimarket', description: 'Global Concierge' }
+import { Plus_Jakarta_Sans } from 'next/font/google'
+const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'] })
+export const metadata = {
+title: 'Afrimarket | Global Concierge',
+description: 'Shop anywhere, receive in Nigeria.',
+}
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 return (
 <html lang="en">
-<body className={inter.className}>{children}</body>
+<body className={jakarta.className}>{children}</body>
 </html>
 )
 }
