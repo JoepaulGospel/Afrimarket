@@ -6,7 +6,7 @@ SERVICE_FEE_PERCENT: 0.05,
 SHIPPING_RATES: { US: 12, UK: 10, CA: 11, CN: 9 } as Record<OriginKey, number>,
 DUTY_RATES: { GADGETS: 0.20, CLOTHING: 0.10, GENERAL: 0.15 } as Record<CategoryKey, number>,
 LOCAL_DELIVERY: 4500,
-RESTRICTED_KEYWORDS: ["battery", "lithium", "liquid", "perfume", "powerbank", "flammable", "aerosol", "oil"]
+RESTRICTED_KEYWORDS: ["battery", "lithium", "liquid", "perfume", "powerbank", "flammable"]
 };
 export function calculateFullQuote(priceUsd: number, weight: number, origin: OriginKey, category: CategoryKey) {
 const cfg = AFRIMARKET_CONFIG;
