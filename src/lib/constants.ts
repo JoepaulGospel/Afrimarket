@@ -22,7 +22,6 @@ const cfg = AFRIMARKET_CONFIG;
 const itemNgn = priceUsd * cfg.FX_RATE;
 const shipNgn = (cfg.SHIPPING_RATES[origin] || 12) * weight * cfg.FX_RATE;
 const dutyNgn = itemNgn * (cfg.DUTY_RATES[category] || 0.15);
-// Service fee applied to Item + Shipping
 const serviceFeeNgn = (itemNgn + shipNgn) * cfg.SERVICE_FEE_PERCENT;
 return {
 itemNgn,
