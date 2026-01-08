@@ -1,6 +1,14 @@
 export type OriginKey = 'US' | 'UK' | 'CA' | 'CN';
 export type CategoryKey = 'GADGETS' | 'CLOTHING' | 'GENERAL';
-export const AFRIMARKET_CONFIG = {
+interface Config {
+FX_RATE: number;
+SERVICE_FEE_PERCENT: number;
+SHIPPING_RATES: { [key in OriginKey]: number };
+DUTY_RATES: { [key in CategoryKey]: number };
+LOCAL_DELIVERY: number;
+RESTRICTED_KEYWORDS: string[];
+}
+export const AFRIMARKET_CONFIG: Config = {
 FX_RATE: 1650,
 SERVICE_FEE_PERCENT: 0.05,
 SHIPPING_RATES: {
@@ -8,12 +16,12 @@ US: 12,
 UK: 10,
 CA: 11,
 CN: 9
-} as Record<OriginKey, number>,
+},
 DUTY_RATES: {
 GADGETS: 0.20,
 CLOTHING: 0.10,
 GENERAL: 0.15
-} as Record<CategoryKey, number>,
+},
 LOCAL_DELIVERY: 4500,
 RESTRICTED_KEYWORDS: ["battery", "lithium", "liquid", "perfume", "powerbank", "flammable", "aerosol", "oil", "drone", "weapon", "phone"]
 };
