@@ -1,14 +1,4 @@
-export type OriginKey = 'US' | 'UK' | 'CA' | 'CN';
-export type CategoryKey = 'GADGETS' | 'CLOTHING' | 'GENERAL';
-interface Config {
-FX_RATE: number;
-SERVICE_FEE_PERCENT: number;
-SHIPPING_RATES: { [key in OriginKey]: number };
-DUTY_RATES: { [key in CategoryKey]: number };
-LOCAL_DELIVERY: number;
-RESTRICTED_KEYWORDS: string[];
-}
-export const AFRIMARKET_CONFIG: Config = {
+export const AFRIMARKET_CONFIG = {
 FX_RATE: 1650,
 SERVICE_FEE_PERCENT: 0.05,
 SHIPPING_RATES: {
@@ -25,11 +15,16 @@ GENERAL: 0.15
 LOCAL_DELIVERY: 4500,
 RESTRICTED_KEYWORDS: ["battery", "lithium", "liquid", "perfume", "powerbank", "flammable", "aerosol", "oil", "drone", "weapon", "phone"]
 };
-export function calculateFullQuote(priceUsd: number, weight: number, origin: OriginKey, category: CategoryKey) {
+export function calculateFullQuote(priceUsd: number, weight: number, origin: string, category: string) {
 const cfg = AFRIMARKET_CONFIG;
 const itemNgn = priceUsd * cfg.FX_RATE;
-const shipNgn = (cfg.SHIPPING_RATES[origin] || 12) * weight * cfg.FX_RATE;
-const dutyNgn = itemNgn * (cfg.DUTY_RATES[category] || 0.15);
+// Logic to handle rates
+const rates = cfg.SHIPPING_RATES as any;
+const shipRate = rates[origin] || 12;
+const duties = cfg.DUTY_RATES as any;
+const dutyRate = duties[category] || 0.15;
+const shipNgn = shipRate * weight * cfg.FX_RATE;
+const dutyNgn = itemNgn * dutyRate;
 const serviceFeeNgn = (itemNgn + shipNgn) * cfg.SERVICE_FEE_PERCENT;
 return {
 itemNgn,
