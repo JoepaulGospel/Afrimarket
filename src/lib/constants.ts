@@ -3,7 +3,7 @@ export type CategoryKey = 'GADGETS' | 'CLOTHING' | 'GENERAL';
 export const AFRIMARKET_CONFIG = {
 FX_RATE: 1650,
 SERVICE_FEE_PERCENT: 0.05,
-SHIPPING_RATES: 
+SHIPPING_RATES: {
 US: 12,
 UK: 10,
 CA: 11,
@@ -22,7 +22,7 @@ const cfg = AFRIMARKET_CONFIG;
 const itemNgn = priceUsd * cfg.FX_RATE;
 const shipNgn = (cfg.SHIPPING_RATES[origin] || 12) * weight * cfg.FX_RATE;
 const dutyNgn = itemNgn * (cfg.DUTY_RATES[category] || 0.15);
-// PRD Alignment: Service fee applied to Item + Shipping
+// Service fee applied to Item + Shipping
 const serviceFeeNgn = (itemNgn + shipNgn) * cfg.SERVICE_FEE_PERCENT;
 return {
 itemNgn,
