@@ -9,7 +9,7 @@
 "lint": "next lint"
 },
 "dependencies": {
-"next": "latest",
+"next": "14.2.3",
 "react": "latest",
 "react-dom": "latest",
 "lucide-react": "latest",
@@ -20,6 +20,10 @@
 "devDependencies": {
 "autoprefixer": "latest",
 "postcss": "latest",
-"tailwindcss": "latest"
+"tailwindcss": "latest",
+"typescript": "latest",
+"@types/node": "latest",
+"@types/react": "latest",
+"@types/react-dom": "latest"
 }
 }
