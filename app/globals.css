@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root {
+--kb_orange: #FF8C00;
+}
+body {
+background: #050505;
+color: white;
+overflow-x: hidden;
+}
+/* Custom Scrollbar for the Stark Vibe */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #FF8C00; }
+@keyframes scan {
+0% { transform: translateY(-100%); }
+100% { transform: translateY(100%); }
+}
+.scanning-line {
+height: 2px; width: 100%; background: #FF8C00;
+position: absolute; animation: scan 2s infinite linear;
+opacity: 0.5;
+}
+.no-scrollbar::-webkit-scrollbar { display: none; }
